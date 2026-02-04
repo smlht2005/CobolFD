@@ -1,0 +1,47 @@
+***********************************************************
+***  HZ SYSTEM MASTF COPY FILE NAME : HZ_PK3.MST ....
+***  < HZ_MPKC> FILE RECORDS LENGTH ARE 228 CHARS.
+***  PKI 個人BYPASS設定檔
+***********************************************************
+***  HZPK3-MST-KEY  = HZPK3-USER-ID + HZPK3-BEG-DATI
+***  HZPK3-ALT-KEY1 = HZPK3-USER-ID + HZPK3-END-DATI + HZPK3-BEG-DATI
+***********************************************************
+FD      HZPK3-MST IS EXTERNAL.
+01      HZPK3-MST-REC.
+* 員工編號
+     	02 HZPK3-USER-ID			PIC X(10).
+* BYPASS 開始日時     	
+	02 HZPK3-BEG-DATI			PIC 9(9).
+	02 HZPK3-BDATE1 REDEFINES HZPK3-BEG-DATI.
+* BYPASS 開始日期
+		03 HZPK3-BEG-DATE		PIC 9(7).
+* BYPASS 開始時間
+		03 HZPK3-BEG-HH			PIC 9(2).
+* BYPASS 結束日時     	
+	02 HZPK3-END-DATI			PIC 9(9).
+	02 HZPK3-EDATE1 REDEFINES HZPK3-END-DATI.
+* BYPASS 結束日期
+		03 HZPK3-END-DATE		PIC 9(7).
+* BYPASS 結束時間
+		03 HZPK3-END-HH			PIC 9(2).
+*
+$XFD USE GROUP, VAR-LENGTH
+        02 HZPK3-DATA1.
+* BYPASS 原因 (1.忘卡 2.掉卡 3.毀損 4.其他)
+		03 HZPK3-BYPASS			PIC X(1).
+* 建檔人(員工編號)
+		03 HZPK3-CRE-USER		PIC X(5).
+* 建檔日期
+		03 HZPK3-CRE-DATE		PIC 9(7).
+* 建檔時間
+		03 HZPK3-CRE-TIME		PIC 9(6).
+* 修改人
+		03 HZPK3-MOD-USER		PIC X(5).
+* 修改日期
+		03 HZPK3-MOD-DATE		PIC 9(7).
+* 修改時間
+		03 HZPK3-MOD-TIME		PIC 9(6).
+* 說明 (原因為4.其他時使用)
+		03 HZPK3-REMARK			PIC X(60).			
+* 預留
+	   	03 HZPK3-FILLER			PIC X(103).

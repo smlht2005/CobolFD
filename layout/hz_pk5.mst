@@ -1,0 +1,70 @@
+***********************************************************
+***  HA SYSTEM MASTF COPY FILE NAME : HZ_PK5.MST ....
+***  < HZ_MPKE> FILE RECORDS LENGTH ARE 358 CHARS.
+***  PKI BYPASS補簽記錄檔
+***********************************************************
+***  HZPK5-MST-KEY  = HZPK5-ID HZPK5-KEY1 HZPK5-KEY2
+***  HZPK5-ALT-KEY1 = HZPK5-ID HZPK5-MARK HZPK5-KEY2 HZPK5-KEY1
+***  HZPK5-ALT-KEY2 = HZPK5-ID HZPK5-MARK HZPK5-CRE-DATA HZPK5-KEY2 HZPK5-KEY1
+***********************************************************
+FD      HZPK5-MST IS EXTERNAL.
+01      HZPK5-MST-REC.
+* HZPK5-ID = [PK51] 存放整批刪除待補簽之處理記錄
+* HZPK5-ID = [PK52] 存放BY PASS 待補簽記錄/已補簽/被刪除資料
+	02 HZPK5-ID				PIC X(04).
+$XFD USE GROUP	
+	02 HZPK5-KEY1.
+* 處理整批刪除的日期時間
+		03	HZPK5-PROCESS-DATE	PIC 9(7).
+		03	HZPK5-PROCESS-TIME	PIC 9(8).
+	02 HZPK5-KEY2.
+* ID = PK51 時, 此欄位為執行整批刪除的員工編號	
+* ID = PK52 時, 此欄位為待補簽員工編號
+       		03 HZPK5-USER-ID		PIC X(10).
+* 系統作業別
+		03 HZPK5-SYSID			PIC X(5).
+* 待補簽的XML檔名
+		03 HZPK5-FILENAME		PIC X(70).
+* 補簽完成識別(空白表示待簽, Y表示已補簽, D表示刪除補簽)
+	02 HZPK5-MARK				PIC X(01).
+* 資料
+* 建檔日期時間(待補簽資料產生日期時間)
+$XFD USE GROUP
+        02 HZPK5-CRE-DATA.
+		03 HZPK5-CRE-DATE		PIC 9(7).
+		03 HZPK5-CRE-TIME		PIC 9(8).
+* 補簽時間(HZPK5-MARK = "Y")
+$XFD USE GROUP		
+	02 HZPK5-MOD-DATA.
+		03 HZPK5-MOD-DATE		PIC 9(7).
+		03 HZPK5-MOD-TIME		PIC 9(8).
+* 整批刪除日期時間(HZPK5-MARK = "D")
+$XFD USE GROUP
+	02 HZPK5-DEL-DATA.
+		03 HZPK5-DEL-DATE		PIC 9(7).
+		03 HZPK5-DEL-TIME		PIC 9(8).
+* 補簽時數(IF HZPK5-MOD-DATE = 0, HZPK5-HOURS = 999999)
+*          ELSE HZPK5-HOURS = 補簽時間 - 建檔時間所得的時數		
+	02 HZPK5-HOURS				PIC 9(8).
+$XFD USE GROUP, VAR-LENGTH
+* 預留
+   	02 HZPK5-FILLER.
+* 待補簽識別 : 1--> 醫令待補簽, 2-->其他作業點待補簽 
+		03 HZPK5-DATA-ID		PIC X(1).
+* 補簽處理後的檔名		
+		03 HZPK5-SIN-FILENAME		PIC X(70).
+* 以下 三欄位為 ID = PK51 所使用
+* 整批刪除起始日
+		03 HZPK5-BEG-DATE		PIC 9(7).
+* 整批刪除結束日
+		03 HZPK5-END-DATE		PIC 9(7).
+* 整批刪除指定員工編號
+		03 HZPK5-USID			PIC X(10).
+* 預留
+		03 HZPK5-FILLER			PIC X(105).	
+		03 HZPK5-FILLERS	REDEFINES HZPK5-FILLER.
+			04 HZPK5-PATNO		PIC 9(8).
+			04 HZPK5-IDNO		PIC X(10).
+* 二次簽章檔名
+			04 HZPK5-SEC-SIGN	PIC X(60).			
+			04 HZPK5-DATA		PIC X(27).

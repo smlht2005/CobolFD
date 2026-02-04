@@ -1,0 +1,60 @@
+﻿*****************************************************
+* 住院收款檔 [日記帳檔]  RECORD LENGTH = 182 BYTES
+*****************************************************
+FD AMT-MST              EXTERNAL.
+01 AMT-MST-REC.
+        02 AMT-KEY.
+           03 AMT-KEY1.
+* 輸入日期
+              04 AMT-DUTY-DT                            PIC 9(7).
+* 輸入時間
+              04 AMT-DUTY-TIME.
+                 05 AMT-DUTY-HH                         PIC 9(2).
+                 05 AMT-DUTY-MM                         PIC 9(2).
+                 05 AMT-DUTY-SS                         PIC 9(2).
+* 建檔人 X(4) ==> X(5) 84.11.01
+              04 AMT-DUTY-ID                            PIC X(5).
+           03 AMT-FROM.
+* [A]預收款 [B]預繳金支付 [C]繳付款 [D]結帳退預收款 [E]退款
+              04 AMT-FROM1                              PIC X.
+* 1.現金 2.支票 3.刷卡 4.仁愛基金 5.記帳補繳 6.醫院優免 7.匯票 8.匯款單 9.轉列呆帳 A.金融IC卡
+              04 AMT-FROM2                              PIC X.
+* 住院 KEY
+           03 AMT-KEY2.
+$XFD USE GROUP
+              04 AMT-IPD-NO.
+                 05 AMT-IPD-DATE                        PIC 9(7).
+                 05 AMT-IPD-SEQ                         PIC 9(4).
+$XFD USE GROUP,VAR-LENGTH
+        02 AMT-GROUP-DATA1.
+* 特別折扣                                                              1:7
+                03 AMT-S-DISC-AMT                       PIC S9(7).
+* 補助單金額                                                            8:7
+                03 AMT-COUPON-AMT                       PIC S9(7).
+* 人工記帳                                                              15:7
+                03 AMT-WK-CRD-AMT                       PIC S9(7).
+* 預收款 (退款時為負數)                                                 22:7
+                03 AMT-PRE-AMT                          PIC S9(7).
+* 收現;欠款金額;退款金額 (退款時為負數)                                 29:7
+                03 AMT-CASH                             PIC S9(7).
+* 收據號碼                                                              36:8
+                03 AMT-RCPI-NO.
+                   05 AMT-RCPI-NO1                      PIC 9(1).
+                   05 AMT-RCPI-NO2                      PIC 9(7).
+* 科別                                                                  44:4
+                03 AMT-DPT-ID                           PIC X(4).
+* 醫師別                                                                48:4
+                03 AMT-DOCTOR-ID                        PIC X(4).
+** 刷卡調閱編號 (900403 ADD 豐原)                                       52:6
+		03 AMT-CARD-KNO				PIC 9(6).
+** 刷卡調閱識別 (900403 ADD 豐原)                                       58:1
+		03 AMT-CARD-KID				PIC X(1).
+*>		2012/11/1 PENNY 新增玉里預繳金扣抵註記                  59:1
+*>                03 AMT-FILLER                         PIC X(93).
+                03 AMT-ULI-MARK                         PIC X(1).
+* 預留                                                                  60:92
+                03 AMT-FILLER                           PIC X(92).                
+*********************
+* END OF HI_AMT.MST
+*********************
+

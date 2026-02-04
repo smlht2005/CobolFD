@@ -1,0 +1,38 @@
+***********************************************************
+***  HA SYSTEM MASTF COPY FILE NAME : HZ_PK4.MST ....
+***  < HZ_MPK4> FILE RECORDS LENGTH ARE 303 CHARS.
+***  PKI 交易序號記錄檔(記錄離線待補驗章資料)
+***********************************************************
+***  HZPK4-MST-KEY  = HZPK4-ID + HZPK4-KEY
+***  HZPK4-ALT-KEY  = HZPK4-ID + HZPK4-TRANSID + HZPK4-KEY
+***  HZPK4-ALT-KEY1 = HZPK4-ID + HZPK4-LOCK + HZPK4-KEY
+***********************************************************
+FD      HZPK4-MST IS EXTERNAL.
+01      HZPK4-MST-REC.
+* 識別（PK41:ONLINE   PK42:OFFILNE)
+	02 HZPK4-ID				PIC X(4).
+	02 HZPK4-KEY.
+* 身份證字號
+	       	03 HZPK4-IDNO			PIC X(10).
+* 系統別
+		03 HZPK4-SYSID			PIC X(3).
+* 檔名
+		03 HZPK4-FILENAME		PIC X(70).
+*
+* 補驗完成識別 (PK42用)(空白表示待驗, Y表示已補驗)
+	02 HZPK4-LOCK				PIC X(1).
+* 交易序號
+	02 HZPK4-TRANSID			PIC 9(15).	
+*	
+$XFD USE GROUP, VAR-LENGTH
+        02 HZPK4-DATA1.
+* 待驗產生日期
+		03 HZPK4-CRE-DATE		PIC 9(7).
+* 待驗產生時間
+		03 HZPK4-CRE-TIME		PIC 9(6).
+* 補驗日期
+		03 HZPK4-MOD-DATE		PIC 9(7).
+* 補驗時間		
+		03 HZPK4-MOD-TIME		PIC 9(6).
+* 預留
+	   	03 HZPK4-FILLER			PIC X(174).
