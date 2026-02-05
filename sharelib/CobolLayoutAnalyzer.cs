@@ -8,6 +8,9 @@
  * - 2026-02-04 11:15: 移除 IsExternal 篩選，所有 FD 皆計算 Size/DET
  * - 2026-02-03 18:30: 新增 CobolLayoutAnalyzer，ParseCobolStructure、CountDET、CountSize
  */
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace CobolLayoutLib
@@ -109,7 +112,7 @@ namespace CobolLayoutLib
             var stack = new Stack<CobolField>();
             var lines = cobolCode.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
-            CobolField? currentFD = null;
+            CobolField currentFD = null;
             int skipLevel = int.MaxValue;
 
             foreach (var line in lines)

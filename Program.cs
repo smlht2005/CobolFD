@@ -1,4 +1,16 @@
 /*
+ * 更新時間：2026-02-05 16:00
+ * 作者：Cursor
+ * 摘要：添加處理進度顯示功能，顯示當前進度、百分比和檔案名稱
+ * 更新時間：2026-02-05 15:54
+ * 作者：Cursor
+ * 摘要：調整 CSV 輸出順序（名稱改為第一欄）、修正 DET=0 時輸出 0 並評估為 Low（不再輸出 "-"）
+ * 更新時間：2026-02-05 15:05
+ * 作者：Cursor
+ * 摘要：遷移至 .NET Framework 4.8，移除 Encoding.RegisterProvider（.NET Framework 4.8 原生支援 Big5 編碼）
+ * 更新時間：2026-02-04 19:45
+ * 作者：Cursor
+ * 摘要：--test 時優先使用與執行檔同目錄的 layout 資料夾，發佈至 publish 後新手可直接執行 --test。
  * 更新時間：2026-02-04 12:15
  * 作者：Cursor
  * 摘要：OutputFile 必填驗證與輸出目錄建立，確保使用 App.config 指定路徑建立 output.csv
@@ -226,10 +238,10 @@ public class CobolFieldCalculator
             return;
         }
 
-        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        // .NET Framework 4.8 原生支援 Big5 編碼，不需要註冊 Provider
         Encoding big5 = Encoding.GetEncoding("big5");
 
-        var csvLines = new List<string> { "檔名,日期,名稱,大小,DET,複雜度" };
+        var csvLines = new List<string> { "名稱,檔名,日期,大小,DET,複雜度" };
         int processedCount = 0;
         int errorCount = 0;
         string actualOutputPath = outputFullPath;
@@ -246,10 +258,19 @@ public class CobolFieldCalculator
             logWriter.WriteLine($"FilesToProcess={files.Length}");
             logWriter.WriteLine();
 
-            foreach (string filePath in files)
+            int totalFiles = files.Length;
+            Console.WriteLine($"處理檔案: {totalFiles} 個檔案");
+
+            for (int i = 0; i < files.Length; i++)
             {
+                string filePath = files[i];
                 string fileName = Path.GetFileName(filePath);
                 string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                int currentIndex = i + 1;
+                double percentage = (double)currentIndex / totalFiles * 100;
+
+                // 顯示處理中
+                Console.Write($"\r[{currentIndex}/{totalFiles}] ({percentage:F1}%) Processing: {fileName}...");
 
                 try
                 {
@@ -269,20 +290,31 @@ public class CobolFieldCalculator
 
                     foreach (var r in rowsToEmit)
                     {
-                        string complexity = (r.name == "-" && r.size == 0 && r.det == 0) ? "-" : ComplexityEvaluator.EvaluateComplexity(r.det);
-                        csvLines.Add($"{programName},{fileDate},{r.name},{r.size},{r.det},{complexity}");
+                        // DET=0 時也進行複雜度評估（歸類為 Low），不再輸出 "-"
+                        string complexity = ComplexityEvaluator.EvaluateComplexity(r.det);
+                        // CSV 欄位順序：名稱,檔名,日期,大小,DET,複雜度
+                        csvLines.Add($"{r.name},{programName},{fileDate},{r.size},{r.det},{complexity}");
                     }
 
                     processedCount++;
                     logWriter.WriteLine($"[{timestamp}] [Processed] file={fileName} rows={rowsToEmit.Count}");
+                    
+                    // 顯示完成（使用空格清除多餘字元）
+                    Console.Write($"\r[{currentIndex}/{totalFiles}] ({percentage:F1}%) Completed: {fileName}    ");
                 }
                 catch (Exception ex)
                 {
                     errorCount++;
                     logWriter.WriteLine($"[{timestamp}] [Error] file={fileName} message={ex.Message}");
                     logWriter.WriteLine($"  StackTrace: {ex.StackTrace}");
+                    
+                    // 顯示錯誤（使用空格清除多餘字元）
+                    Console.Write($"\r[{currentIndex}/{totalFiles}] ({percentage:F1}%) Error: {fileName}    ");
                 }
             }
+
+            // 處理完成後換行
+            Console.WriteLine();
 
             try
             {
@@ -329,10 +361,15 @@ public class CobolFieldCalculator
         Console.WriteLine("=== CobolLayoutLib DET 計算測試 ===\n");
         Console.WriteLine($"複雜度閾值：{ComplexityEvaluator.GetThresholdDescription()}\n");
 
-        string layoutFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "layout");
+        // 優先使用與執行檔同目錄的 layout（發佈後新手可直接 --test）
+        string layoutFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "layout");
         if (!Directory.Exists(layoutFolder))
         {
-            layoutFolder = @"c:\Development\HISCore\functionpoint\CobolFD\layout";
+            layoutFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "layout");
+        }
+        if (!Directory.Exists(layoutFolder))
+        {
+            layoutFolder = Path.Combine(Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)) ?? "", "layout");
         }
 
         if (!Directory.Exists(layoutFolder))
@@ -390,7 +427,7 @@ public class CobolFieldCalculator
             return;
         }
 
-        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        // .NET Framework 4.8 原生支援 Big5 編碼，不需要註冊 Provider
         Encoding big5 = Encoding.GetEncoding("big5");
         string content = File.ReadAllText(filePath, big5);
 

@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cobolExternal", "cobolExternal.csproj", "{7E3BD341-98C2-A124-F5CA-313A0E2ACC0C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CobolLayoutLib", "sharelib\CobolLayoutLib.csproj", "{88D503B5-7AA1-1739-38D3-249A9C7D67F7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7E3BD341-98C2-A124-F5CA-313A0E2ACC0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E3BD341-98C2-A124-F5CA-313A0E2ACC0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E3BD341-98C2-A124-F5CA-313A0E2ACC0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E3BD341-98C2-A124-F5CA-313A0E2ACC0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88D503B5-7AA1-1739-38D3-249A9C7D67F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88D503B5-7AA1-1739-38D3-249A9C7D67F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88D503B5-7AA1-1739-38D3-249A9C7D67F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88D503B5-7AA1-1739-38D3-249A9C7D67F7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D183ADA6-16A2-4C91-8752-75A59030ECFD}
+	EndGlobalSection
+EndGlobal

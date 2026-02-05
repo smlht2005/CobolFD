@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <TargetFramework>net48</TargetFramework>
     <RootNamespace>CobolLayoutLib</RootNamespace>
     <AssemblyName>CobolLayoutLib</AssemblyName>
     <Version>1.0.0</Version>
     <Authors>HP Inc.</Authors>
     <Description>COBOL Layout 解析與 Function Point DET 計算共享庫</Description>
   </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
 </Project>

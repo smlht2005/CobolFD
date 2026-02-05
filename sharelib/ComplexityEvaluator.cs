@@ -1,8 +1,14 @@
 /*
+ * 更新時間：2026-02-05 15:15
+ * 作者：Cursor
+ * 摘要：重構從 App.config 讀取複雜度閾值，移除硬編碼常數，支援動態設定
  * 更新時間：2026-02-03 18:30
  * 作者：Cursor
  * 摘要：新增 ComplexityEvaluator 複雜度評估類別，根據 IFPUG 標準判定 Low/Average/High
  */
+using System;
+using System.Configuration;
+
 namespace CobolLayoutLib
 {
     /// <summary>
@@ -11,13 +17,31 @@ namespace CobolLayoutLib
     /// </summary>
     public static class ComplexityEvaluator
     {
-        #region 複雜度閾值常數
+        #region 複雜度閾值（從 App.config 讀取）
 
-        /// <summary>Low 複雜度上限</summary>
-        public const int LowThreshold = 5;
+        /// <summary>
+        /// 從 App.config 讀取 Low 複雜度上限
+        /// 預設值：19（DET ≤ 19 為 Low）
+        /// </summary>
+        private static int GetLowThreshold()
+        {
+            string value = ConfigurationManager.AppSettings["ComplexityLowThreshold"];
+            if (string.IsNullOrEmpty(value))
+                return 19; // 預設值
+            return int.Parse(value);
+        }
 
-        /// <summary>Average 複雜度上限</summary>
-        public const int AverageThreshold = 15;
+        /// <summary>
+        /// 從 App.config 讀取 Average 複雜度上限
+        /// 預設值：50（20 ≤ DET ≤ 50 為 Average，DET > 50 為 High）
+        /// </summary>
+        private static int GetAverageThreshold()
+        {
+            string value = ConfigurationManager.AppSettings["ComplexityAverageThreshold"];
+            if (string.IsNullOrEmpty(value))
+                return 50; // 預設值
+            return int.Parse(value);
+        }
 
         #endregion
 
@@ -30,9 +54,13 @@ namespace CobolLayoutLib
         /// <returns>Low / Average / High</returns>
         public static string EvaluateComplexity(int det)
         {
-            if (det <= LowThreshold) return "Low";
-            if (det <= AverageThreshold) return "Average";
-            return "High";
+            int lowThreshold = GetLowThreshold();
+            int avgThreshold = GetAverageThreshold();
+            
+            // DET = 0 也歸類為 Low（DET ≤ lowThreshold）
+            if (det <= lowThreshold) return "Low";
+            if (det <= avgThreshold) return "Average";
+            return "High";  // DET > avgThreshold
         }
 
         /// <summary>
@@ -40,8 +68,11 @@ namespace CobolLayoutLib
         /// </summary>
         public static ComplexityLevel GetComplexityLevel(int det)
         {
-            if (det <= LowThreshold) return ComplexityLevel.Low;
-            if (det <= AverageThreshold) return ComplexityLevel.Average;
+            int lowThreshold = GetLowThreshold();
+            int avgThreshold = GetAverageThreshold();
+            
+            if (det <= lowThreshold) return ComplexityLevel.Low;
+            if (det <= avgThreshold) return ComplexityLevel.Average;
             return ComplexityLevel.High;
         }
 
@@ -54,13 +85,13 @@ namespace CobolLayoutLib
         /// </summary>
         public static int GetIlfWeight(string complexity)
         {
-            return complexity switch
+            switch (complexity)
             {
-                "Low" => 7,
-                "Average" => 10,
-                "High" => 15,
-                _ => 10
-            };
+                case "Low": return 7;
+                case "Average": return 10;
+                case "High": return 15;
+                default: return 10;
+            }
         }
 
         /// <summary>
@@ -68,13 +99,13 @@ namespace CobolLayoutLib
         /// </summary>
         public static int GetIlfWeight(ComplexityLevel level)
         {
-            return level switch
+            switch (level)
             {
-                ComplexityLevel.Low => 7,
-                ComplexityLevel.Average => 10,
-                ComplexityLevel.High => 15,
-                _ => 10
-            };
+                case ComplexityLevel.Low: return 7;
+                case ComplexityLevel.Average: return 10;
+                case ComplexityLevel.High: return 15;
+                default: return 10;
+            }
         }
 
         /// <summary>
@@ -82,13 +113,13 @@ namespace CobolLayoutLib
         /// </summary>
         public static int GetEifWeight(string complexity)
         {
-            return complexity switch
+            switch (complexity)
             {
-                "Low" => 5,
-                "Average" => 7,
-                "High" => 10,
-                _ => 7
-            };
+                case "Low": return 5;
+                case "Average": return 7;
+                case "High": return 10;
+                default: return 7;
+            }
         }
 
         /// <summary>
@@ -96,13 +127,13 @@ namespace CobolLayoutLib
         /// </summary>
         public static int GetEifWeight(ComplexityLevel level)
         {
-            return level switch
+            switch (level)
             {
-                ComplexityLevel.Low => 5,
-                ComplexityLevel.Average => 7,
-                ComplexityLevel.High => 10,
-                _ => 7
-            };
+                case ComplexityLevel.Low: return 5;
+                case ComplexityLevel.Average: return 7;
+                case ComplexityLevel.High: return 10;
+                default: return 7;
+            }
         }
 
         #endregion
@@ -114,7 +145,9 @@ namespace CobolLayoutLib
         /// </summary>
         public static string GetThresholdDescription()
         {
-            return $"Low: DET ≤ {LowThreshold}, Average: {LowThreshold} < DET ≤ {AverageThreshold}, High: DET > {AverageThreshold}";
+            int lowThreshold = GetLowThreshold();
+            int avgThreshold = GetAverageThreshold();
+            return $"Low: DET ≤ {lowThreshold}, Average: {lowThreshold} < DET ≤ {avgThreshold}, High: DET > {avgThreshold}";
         }
 
         #endregion

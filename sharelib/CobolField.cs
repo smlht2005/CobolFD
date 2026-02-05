@@ -3,6 +3,8 @@
  * 作者：Cursor
  * 摘要：新增 CobolField 欄位資料模型，從 Program.cs 抽取為共享類別
  */
+using System.Collections.Generic;
+
 namespace CobolLayoutLib
 {
     /// <summary>
